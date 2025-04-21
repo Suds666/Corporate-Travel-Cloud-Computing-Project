@@ -249,48 +249,93 @@ function Locations() {
   };
 
   // *** CALCULATE ISO DATETIME STRINGS using useMemo ***
-  const { departureDateTime, arrivalDateTime } = useMemo(() => {
+    // *** CALCULATE ISO DATETIME STRINGS using useMemo ***
+    const { departureDateTime, arrivalDateTime } = useMemo(() => {
       let depISO = null;
       let arrISO = null;
-      // Only calculate if we have the necessary details and no date error
-      if (selectedFlightDetails && selectedDate && !dateError && !routeError) {
-          const depTime = selectedFlightDetails.departure_time; // e.g., "08:00:00"
-          const arrTime = selectedFlightDetails.arrival_time;   // e.g., "10:30:00" or "02:00:00"
 
-          // Basic validation for time strings (HH:MM or HH:MM:SS)
-          const timeRegex = /^\d{2}:\d{2}(:\d{2})?$/;
+      // Helper function to parse and format time string (handles H:MM, HH:MM, H:MM:SS, HH:MM:SS)
+      const parseAndFormatTime = (timeStr) => {
+          if (!timeStr || typeof timeStr !== 'string') return null;
 
-          if (depTime && typeof depTime === 'string' && depTime.match(timeRegex)) {
-              const formattedDepTime = depTime.length === 5 ? `${depTime}:00` : depTime;
-              depISO = `${selectedDate}T${formattedDepTime}`;
-          } else if (depTime) {
-              console.warn("Invalid departure time format received:", depTime);
+          const parts = timeStr.split(':');
+          if (parts.length < 2 || parts.length > 3) {
+              console.warn("Invalid time format (needs HH:MM or HH:MM:SS):", timeStr);
+              return null; // Expect HH:MM or HH:MM:SS
           }
 
-          if (arrTime && typeof arrTime === 'string' && arrTime.match(timeRegex)) {
-              const formattedArrTime = arrTime.length === 5 ? `${arrTime}:00` : arrTime;
+          let [hour, minute, second] = parts;
+
+          // Validate parts look like numbers
+          if (isNaN(parseInt(hour)) || isNaN(parseInt(minute)) || (parts.length === 3 && isNaN(parseInt(second)))) {
+              console.warn("Invalid time components (not numbers):", timeStr);
+              return null;
+          }
+
+          // Pad hour and minute if necessary
+          const paddedHour = String(hour).padStart(2, '0');
+          const paddedMinute = String(minute).padStart(2, '0');
+          // Default seconds to '00' if not provided or pad existing seconds
+          const paddedSecond = parts.length === 3 ? String(second).padStart(2, '0') : '00';
+
+          // Basic range validation
+          const hourNum = parseInt(paddedHour);
+          const minNum = parseInt(paddedMinute);
+          const secNum = parseInt(paddedSecond);
+          if (hourNum < 0 || hourNum > 23 || minNum < 0 || minNum > 59 || secNum < 0 || secNum > 59) {
+               console.warn("Invalid time value out of range:", `${paddedHour}:${paddedMinute}:${paddedSecond}`);
+               return null; // Invalid time range
+          }
+
+          // Return consistently formatted HH:MM:SS
+          return `${paddedHour}:${paddedMinute}:${paddedSecond}`;
+      };
+
+
+      // Only calculate if we have the necessary details and no date error
+      if (selectedFlightDetails && selectedDate && !dateError && !routeError) {
+          const depTimeInput = selectedFlightDetails.departure_time; // e.g., "08:00:00", "8:00", "9:30:15"
+          const arrTimeInput = selectedFlightDetails.arrival_time;   // e.g., "10:30:00", "02:00:00"
+
+          const formattedDepTime = parseAndFormatTime(depTimeInput); // Returns "HH:MM:SS" or null
+          const formattedArrTime = parseAndFormatTime(arrTimeInput); // Returns "HH:MM:SS" or null
+
+          if (formattedDepTime) {
+              depISO = `${selectedDate}T${formattedDepTime}`;
+          } else if (depTimeInput) { // Log warning only if input existed but parsing failed
+              console.warn("Could not parse departure time:", depTimeInput);
+          }
+
+          if (formattedArrTime) {
               let arrivalDateStr = selectedDate;
 
-              // Check for overnight flight only if depTime is also valid
-              if (depTime && depTime.match(timeRegex) && formattedArrTime < (depTime.length === 5 ? `${depTime}:00` : depTime)) {
+              // Check for overnight flight: Compare formatted times (guaranteed HH:MM:SS)
+              // This check is reliable now because both times are in the same padded format.
+              if (formattedDepTime && formattedArrTime < formattedDepTime) {
                   try {
-                      const arrivalDtObj = new Date(selectedDate + 'T00:00:00');
-                      if(isNaN(arrivalDtObj)) throw new Error("Invalid start date for arrival calculation");
-                      arrivalDtObj.setDate(arrivalDtObj.getDate() + 1);
-                      arrivalDateStr = formatDate(arrivalDtObj);
+                      // Calculate next day's date string
+                      const departureDateObj = new Date(selectedDate + 'T00:00:00Z'); // Use Z for UTC base to avoid DST issues in calculation
+                      if(isNaN(departureDateObj)) throw new Error("Invalid start date for arrival calculation");
+                      departureDateObj.setUTCDate(departureDateObj.getUTCDate() + 1); // Increment UTC date
+                      arrivalDateStr = departureDateObj.toISOString().substring(0, 10); // Get YYYY-MM-DD part
                   } catch(e) {
                       console.error("Error calculating next day arrival date:", e);
-                      arrivalDateStr = selectedDate; // Fallback
+                      // Fallback to original selected date if calculation fails
+                      arrivalDateStr = selectedDate;
                   }
               }
               arrISO = `${arrivalDateStr}T${formattedArrTime}`;
-          } else if (arrTime) {
-              console.warn("Invalid arrival time format received:", arrTime);
+          } else if (arrTimeInput) { // Log warning only if input existed but parsing failed
+              console.warn("Could not parse arrival time:", arrTimeInput);
           }
       }
+
+      // Make sure formatDate can handle the potentially recalculated arrivalDateStr
+      // (Note: formatDate is already defined outside and seems robust)
+
       return { departureDateTime: depISO, arrivalDateTime: arrISO };
   // Dependencies for recalculation
-  }, [selectedFlightDetails, selectedDate, dateError, routeError]);
+  }, [selectedFlightDetails, selectedDate, dateError, routeError]); // Removed formatDate from deps as it's stable
   // **********************************************************
 
   const handleProceed = () => {
