@@ -1,0 +1,8 @@
+# backend/requirements.txt
+Flask
+Flask-MySQLdb
+Flask-Cors
+pytesseract
+Pillow
+waitress
+# Add any other specific libraries you might be using

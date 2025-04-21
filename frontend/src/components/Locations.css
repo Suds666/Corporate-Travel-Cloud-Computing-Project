@@ -1,0 +1,587 @@
+/* --- Font Imports --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@700&display=swap');
+
+/* --- Base Styles --- */
+body {
+  margin: 0;
+  overflow: hidden; /* Prevent scrolling of the entire page */
+}
+
+/* --- Page Wrapper --- */
+.locations-page-wrapper {
+  min-height: 100vh;
+  width: 100vw;
+  position: relative; /* Context for absolute positioning */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align UI overlay towards top */
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  /* --- Background Image --- */
+  background-image: url('../../public/images/lesly-derksen-F4fH5dAfZnE-unsplash.jpg'); /* Path relative to public folder */
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Keep background fixed */
+  overflow: hidden; /* Hide overflowing elements */
+  /* --- Cursor Changes Based on Active Tool --- */
+  cursor: default; /* Default cursor */
+}
+/* Custom cursor when axe tool is active */
+.locations-page-wrapper.tool-active-axe {
+    cursor: url('../../public/images/axe.png') 16 16, crosshair; /* Adjust hotspot (16 16) as needed */
+}
+/* Custom cursor when flint tool is active */
+.locations-page-wrapper.tool-active-flint {
+     cursor: url('../../public/images/stone.png') 16 16, crosshair; /* Adjust hotspot as needed */
+}
+
+
+/* --- Camping Elements Container --- */
+.camping-elements-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Allow clicks to pass through container, enable on specific items */
+  z-index: 1; /* Behind UI overlay */
+  overflow: hidden; /* Ensure elements starting outside are hidden */
+}
+
+/* --- Static Element Positioning & Styling --- */
+
+.bear {
+  position: absolute;
+  bottom: 2%;
+  right: 5%;
+  height: auto; /* Maintain aspect ratio */
+  max-height: 30vh; /* Limit max height */
+  width: auto; /* Let width adjust based on height */
+  max-width: 250px; /* But also limit max width if needed */
+  transform: translateX(50%); /* May need adjustment based on bear image's center */
+  filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.4));
+  z-index: 10;
+  transition: width 0.5s ease-out, opacity 0.8s ease-out; /* Smooth size and fade transitions */
+  pointer-events: none; /* Bear isn't directly interactive */
+  user-select: none;
+}
+.bear.fading {
+    opacity: 0;
+    /* Optional: move it away while fading */
+    /* transform: translateX(50%) translateY(20px); */
+}
+
+/* Tree Container - Makes the tree area interactive */
+.tree-container {
+    position: absolute;
+    bottom: 8%; /* Position base of tree */
+    left: 20%; /* Position horizontally */
+    transform: translateX(-50%); /* Center based on its own width */
+    z-index: 5;
+    transition: transform 0.1s ease-out;
+    pointer-events: auto; /* Allow clicks ON the tree container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    cursor: default; /* Default cursor for tree area */
+}
+/* Add visual cue when tree is choppable (axe active and hover) */
+.locations-page-wrapper.tool-active-axe .tree-container.choppable:hover {
+   /* filter: drop-shadow(0 0 8px cyan); */ /* Optional glow */
+   cursor: url('../../public/images/axe.png') 16 16, crosshair; /* Show axe cursor on hover */
+}
+
+.tree-image {
+    display: block; /* Remove extra space below image */
+    width: 200px; /* Base width */
+    max-width: 30vw; /* Limit width relative to viewport */
+    height: auto;
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+    transition: opacity 0.3s ease-in-out; /* Smooth health transition */
+    margin-bottom: 5px; /* Space for health bar */
+}
+/* Tree Hit Animation */
+.tree-container.hit .tree-image {
+    animation: treeHitShake 0.3s ease-in-out;
+}
+
+@keyframes treeHitShake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+
+/* Tree Health Bar Styling */
+.tree-health-bar-container {
+  width: 80px; /* Relative to tree size */
+  height: 10px;
+  background-color: rgba(139, 0, 0, 0.7); /* Dark red background */
+  border: 1px solid rgba(50, 0, 0, 0.8);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: -15px; /* Overlap slightly with tree base */
+  z-index: 6; /* Above tree image slightly */
+}
+
+.tree-health-bar-inner {
+  height: 100%;
+  background-color: #228B22; /* Forest Green */
+  border-radius: 4px; /* Inner radius */
+  transition: width 0.3s ease-out; /* Animate health bar change */
+}
+
+
+/* Wood Pile Styling */
+.wood-pile {
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: auto;
+    z-index: 20; /* Above tree/bear */
+    pointer-events: auto; /* Allow clicks */
+    cursor: default; /* Default cursor */
+    transition: transform 0.2s ease-out;
+    user-select: none;
+}
+/* Change cursor when flint is active and hovering over wood pile */
+.locations-page-wrapper.tool-active-flint .wood-pile.lightable {
+   cursor: url('../../public/images/stone.png') 16 16, crosshair;
+}
+/* Add hover effect when lightable */
+.wood-pile.lightable:hover {
+    transform: translateX(-50%) scale(1.05);
+}
+
+/* Campfire Styling */
+.campfire.lit {
+    position: absolute;
+    bottom: 15%; /* Same position as wood pile */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px; /* Slightly larger than wood pile */
+    height: auto;
+    z-index: 25; /* Above wood pile */
+    filter: drop-shadow(0px 0px 15px #FFA500); /* Fire glow */
+    animation: flicker 1.5s infinite alternate ease-in-out;
+    pointer-events: none; /* Can't interact with the fire visually */
+    user-select: none;
+}
+
+/* Flicker animation for campfire */
+@keyframes flicker {
+  0% { transform: translateX(-50%) scale(1) rotate(-1deg); opacity: 0.9;}
+  50% { transform: translateX(-50%) scale(1.05) rotate(1deg); opacity: 1;}
+  100% { transform: translateX(-50%) scale(0.98) rotate(0deg); opacity: 0.85;}
+}
+
+/* --- Tools Area --- */
+.tools-area {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    gap: 15px; /* Space between tools */
+    z-index: 60; /* Above most background elements */
+    pointer-events: auto; /* Allow clicks ON the tools area */
+    background-color: rgba(0, 0, 0, 0.2); /* Semi-transparent background */
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.tool {
+    width: 50px;
+    height: 50px;
+    object-fit: contain; /* Ensure image fits without stretching */
+    cursor: pointer;
+    transition: transform 0.2s ease-out, filter 0.2s ease-out;
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3));
+    pointer-events: auto; /* Ensure individual tools are clickable */
+    user-select: none;
+}
+.tool:hover {
+    transform: scale(1.1); /* Grow slightly on hover */
+}
+/* Style for the currently active tool */
+.tool.active {
+    transform: scale(1.15); /* Grow more when active */
+    filter: drop-shadow(2px 2px 4px rgba(255, 255, 0, 0.7)); /* Yellow glow */
+    background-color: rgba(255, 255, 255, 0.1); /* Slight highlight background */
+    border-radius: 5px;
+}
+
+/* --- UI Overlay --- */
+.locations-ui-overlay {
+  position: relative; /* Keep in normal flow relative to page wrapper */
+  z-index: 100; /* On top of all game elements */
+  width: 90%;
+  max-width: 650px; /* Max width for readability */
+  margin-top: 30px; /* Space from top */
+  margin-bottom: 30px; /* Space from bottom */
+  padding: 20px 25px;
+  background-color: rgba(210, 180, 140, 0.85); /* Tan / Wood color */
+  backdrop-filter: blur(5px); /* Frosted glass effect */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 0 0 0 3px rgba(139, 69, 19, 0.5); /* Shadow + Inset border */
+  text-align: center;
+  border: 2px solid #8B4513; /* Darker wood border */
+  color: #4d2600; /* Dark text color */
+}
+
+.locations-ui-overlay h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  font-family: 'Cabin Sketch', cursive; /* Sketchy font */
+  letter-spacing: 1px;
+  color: #582f0e; /* Darker heading color */
+}
+.locations-ui-overlay h3 strong {
+  color: #a0522d; /* Sienna highlight for airline */
+}
+
+/* --- UPDATED Styles for Date Selection and Status --- */
+
+.locations-ui-overlay .company-status-indicator {
+    position: absolute;
+    top: 60px; /* Adjusted position slightly */
+    right: 15px;
+    font-size: 0.8em;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.1); /* Subtle background */
+    z-index: 101; /* Ensure it's above the main content */
+}
+.locations-ui-overlay .company-status-indicator span {
+    padding: 2px 5px;
+    border-radius: 4px;
+    color: white; /* Default text color */
+    text-transform: uppercase; /* Make status uppercase */
+    letter-spacing: 0.5px;
+}
+.locations-ui-overlay .company-status-indicator span.basic {
+    background-color: #6c757d; /* Grey for basic */
+}
+.locations-ui-overlay .company-status-indicator span.premium {
+    background-color: #ffc107; /* Gold/Yellow for premium */
+    color: #333; /* Dark text on yellow bg */
+}
+
+
+/* Group location and date selectors */
+.location-selectors-group {
+    display: flex;
+    flex-direction: column; /* Stack location row and date row */
+    align-items: center; /* Center items horizontally */
+    gap: 20px; /* Space between location row and date row */
+    margin: 25px 0; /* Vertical margin for the whole group */
+}
+
+/* Location selectors row */
+.location-selectors {
+  display: flex;
+  justify-content: space-around; /* Space out origin/dest */
+  align-items: flex-start; /* Align labels/selects at the top */
+  width: 100%; /* Use full width of the group */
+  gap: 15px; /* Space between origin and destination groups */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+/* Individual select group (label + select/input) */
+.select-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px; /* Space between label and input */
+  min-width: 200px; /* Give groups a minimum width */
+  flex: 1; /* Allow groups to grow */
+}
+
+.select-group label {
+  font-weight: 600;
+  font-size: 0.9em;
+  margin-bottom: 3px; /* Small space below label */
+}
+
+.select-group select,
+.select-group input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid #a0522d; /* Wood border */
+  border-radius: 6px;
+  background-color: #f5f5dc; /* Beige background */
+  font-family: 'Poppins', sans-serif; /* Match main font */
+  width: 100%; /* Make inputs fill their group */
+  box-sizing: border-box; /* Include padding/border in width */
+  cursor: pointer;
+}
+
+/* Make disabled selects/inputs look distinct */
+.select-group select:disabled,
+.select-group input[type="date"]:disabled {
+    background-color: #e9ecef; /* Lighter grey */
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+
+/* Styling for the date selector group specifically */
+.select-group.date-selector {
+    margin-top: 0; /* Remove extra top margin when grouped */
+    width: auto; /* Allow it to size naturally based on content */
+    max-width: 250px; /* Control max width if needed */
+    flex: initial; /* Don't let it grow like the others */
+}
+
+/* Style the date picker indicator if possible (browser specific) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* Info message about date restriction */
+.date-restriction-info {
+    font-size: 0.8em;
+    color: #8B4513; /* Saddle Brown */
+    margin-top: 4px;
+    display: block; /* Ensure it takes its own line */
+}
+
+
+/* General Error Message Styling */
+.error-message {
+    color: #dc3545; /* Bootstrap danger red */
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    margin-top: 5px;
+    text-align: center;
+    width: auto; /* Allow width to adjust */
+    max-width: 90%; /* Prevent excessive width */
+    display: inline-block; /* Fit content */
+    box-sizing: border-box;
+}
+/* Specific Date Error */
+.error-message.date-error {
+   /* No extra style needed currently */
+}
+/* Specific Route Error */
+.error-message.route-error {
+    margin-top: 8px;
+}
+/* Small error variant (e.g., for destination list) */
+.error-message.small {
+    font-size: 0.75em;
+    padding: 2px 5px;
+    margin-top: 2px;
+    background: none;
+    border: none;
+    color: #dc3545;
+}
+
+/* General info message styling */
+.info-message {
+    font-size: 0.85em;
+    color: #582f0e; /* Dark brown */
+    margin-top: 8px;
+    display: block;
+}
+/* Small info variant (e.g., for destination list) */
+.info-message.small {
+    font-size: 0.75em;
+    padding: 2px 5px;
+    margin-top: 2px;
+    color: #6c757d; /* Grey */
+}
+
+
+/* Styling for the Selected Flight Details Box */
+.selected-flight-details {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: rgba(245, 245, 220, 0.9); /* Beige, slightly transparent */
+    border: 1px dashed #a0522d; /* Dashed wood border */
+    border-radius: 8px;
+    text-align: left; /* Align text left within the box */
+    animation: fadeInDetails 0.5s ease-out; /* Add fade-in effect */
+    position: relative; /* For z-index context if needed */
+    z-index: 105; /* Ensure it's above other UI elements */
+}
+.selected-flight-details h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #582f0e; /* Dark brown heading */
+    font-family: 'Poppins', sans-serif; /* Regular font */
+    font-size: 1.1em;
+    text-align: center; /* Center heading */
+    border-bottom: 1px solid #d2b48c; /* Light tan underline */
+    padding-bottom: 5px;
+}
+.selected-flight-details p {
+    margin: 5px 0;
+    font-size: 0.95em;
+    color: #4d2600; /* Dark text color */
+}
+.selected-flight-details p strong {
+    color: #8B4513; /* Saddle Brown */
+    min-width: 80px; /* Align labels somewhat */
+    display: inline-block;
+}
+
+/* Fade-in animation for flight details */
+@keyframes fadeInDetails {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* General Button Styles */
+.locations-button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  transition: all 0.2s ease-out;
+  margin: 5px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.locations-button.back {
+  background-color: #deb887; /* BurlyWood */
+  color: #582f0e;
+  border-color: #a0522d;
+  margin-bottom: 10px; /* Reduced margin */
+}
+.locations-button.back:hover {
+  background-color: #cd853f; /* Peru */
+  border-color: #582f0e;
+}
+
+.locations-button.proceed {
+  background-color: #228B22; /* ForestGreen */
+  color: white;
+  border: 1px solid #006400; /* DarkGreen */
+  margin-top: 15px; /* Space above proceed button */
+}
+.locations-button.proceed:hover:not(:disabled) {
+  background-color: #006400; /* DarkGreen */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.locations-button.proceed:disabled {
+  background-color: #8fbc8f; /* DarkSeaGreen */
+  color: #f0fff0; /* Honeydew */
+  cursor: not-allowed;
+  border-color: #556b2f; /* DarkOliveGreen */
+  transform: none;
+  box-shadow: none;
+}
+
+.locations-button.go-home { /* For error state */
+    background-color: #a0522d;
+    color: white;
+}
+.locations-button.go-home:hover {
+    background-color: #8B4513;
+}
+
+/* Styling for error/reloading page states */
+.locations-page-wrapper.error-notice,
+.locations-page-wrapper.reloading-notice {
+    justify-content: center; /* Center content vertically */
+    text-align: center;
+    color: #eee;
+    background-color: rgba(0,0,0,0.7); /* Dark overlay */
+}
+.locations-page-wrapper.error-notice p,
+.locations-page-wrapper.reloading-notice p {
+    background-color: rgba(255,0,0,0.5);
+    padding: 10px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+
+/* --- Z-index Stacking (ensure correctness) --- */
+/* Lower elements */
+.tree-container { z-index: 5; }
+.tree-health-bar-container { z-index: 6; }
+.bear { z-index: 10; }
+.wood-pile { z-index: 20; }
+.campfire.lit { z-index: 25; }
+/* Tools area above background elements */
+.tools-area { z-index: 60; }
+/* UI on very top */
+.locations-ui-overlay { z-index: 100; }
+.company-status-indicator { z-index: 101; } /* Ensure status indicator is above overlay bg */
+.selected-flight-details { z-index: 105; } /* Flight details above overlay background */
+
+
+/* --- Responsive adjustments --- */
+@media (max-width: 600px) {
+    .locations-ui-overlay {
+        max-width: 95%;
+        padding: 15px;
+    }
+    .locations-ui-overlay h3 {
+        font-size: 1.3em; /* Adjust heading size */
+    }
+    .locations-ui-overlay .company-status-indicator {
+        font-size: 0.7em;
+        top: 5px;
+        right: 10px;
+        padding: 2px 5px;
+    }
+
+    .location-selectors-group {
+        gap: 15px; /* Reduce gap on smaller screens */
+    }
+    .location-selectors {
+        flex-direction: column; /* Stack origin/dest on small screens */
+        align-items: center; /* Center them */
+        gap: 15px;
+    }
+    .select-group {
+        width: 90%; /* Allow select groups to take more width */
+        min-width: unset; /* Remove min-width */
+        flex: unset; /* Remove flex grow */
+    }
+    .select-group.date-selector {
+        max-width: 90%; /* Allow date selector to use more width */
+    }
+    .select-group select,
+    .select-group input[type="date"] {
+        /* Width is already 100% */
+    }
+
+    .selected-flight-details {
+        padding: 10px;
+    }
+    .selected-flight-details h4 {
+        font-size: 1em;
+    }
+     .selected-flight-details p {
+        font-size: 0.9em;
+    }
+     .selected-flight-details p strong {
+        min-width: 70px; /* Adjust label width */
+    }
+
+    .locations-button {
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+}

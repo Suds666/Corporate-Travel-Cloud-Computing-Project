@@ -1,0 +1,267 @@
+/* src/components/Insurance.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap'); /* Import a smooth font */
+
+/* Basic reset and font setup */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0; /* Ensure no default body margin interferes */
+}
+
+.insurance-page {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center vertically too */
+    min-height: 100vh;
+    padding: 40px 20px; /* More padding top/bottom */
+    box-sizing: border-box; /* Include padding in height calculation */
+
+    /* --- Beach Background --- */
+    background-image: url('../../public/images/upgraded-points-KVym2PAn1gA-unsplash.jpg'); /* Correct path */
+    background-size: cover; /* Scale the image to cover the entire page */
+    background-position: center center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent tiling */
+    background-attachment: fixed; /* Make background stationary on scroll */
+}
+
+.insurance-content-box {
+    background-color: rgba(255, 255, 255, 0.92); /* Slightly transparent white */
+    padding: 35px 45px;
+    border-radius: 15px; /* More rounded corners */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Softer, more diffused shadow */
+    width: 100%;
+    max-width: 650px; /* Slightly wider */
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.05); /* Very subtle border */
+}
+
+.insurance-content-box h2 {
+    color: #023047; /* Deep ocean blue */
+    margin-bottom: 20px;
+    font-weight: 700; /* Bolder heading */
+}
+
+.insurance-content-box p {
+    color: #3a5a70; /* Muted blue-grey text */
+    line-height: 1.7;
+    margin-bottom: 15px;
+    font-size: 1.05em; /* Slightly larger text */
+}
+
+.insurance-user-info {
+    background-color: rgba(224, 247, 250, 0.8); /* Light cyan, semi-transparent */
+    border-left: 5px solid #48cae4; /* Bright cyan border */
+    padding: 15px 20px;
+    margin: 25px 0;
+    text-align: left;
+    border-radius: 8px;
+    font-size: 1em;
+}
+
+.insurance-user-info strong {
+    color: #023047; /* Deep ocean blue */
+    font-weight: 600;
+}
+
+.insurance-form {
+    margin-top: 30px;
+    text-align: left;
+}
+
+.insurance-form-group {
+    margin-bottom: 25px; /* More space between fields */
+}
+
+.insurance-form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #023047; /* Deep ocean blue */
+    font-size: 0.95em;
+}
+
+.insurance-form-group input[type="date"],
+.insurance-form-group input[type="number"],
+.insurance-form-group input[type="text"],
+.insurance-form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ade8f4; /* Light cyan border */
+    border-radius: 8px; /* Rounded inputs */
+    box-sizing: border-box;
+    font-size: 1em;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f8ff; /* Alice blue background for inputs */
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.insurance-form-group input:focus,
+.insurance-form-group textarea:focus {
+    border-color: #0077b6; /* Focus blue */
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(72, 202, 228, 0.3); /* Cyan glow */
+}
+
+.insurance-form-group textarea {
+    resize: vertical;
+    min-height: 70px;
+}
+
+/* --- Button Styles --- */
+.insurance-button {
+    color: white;
+    padding: 12px 30px; /* Generous padding */
+    border: none;
+    border-radius: 25px; /* Pill shape */
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: block;
+    width: 100%;
+    margin-top: 15px;
+    text-transform: uppercase; /* Uppercase text for buttons */
+    letter-spacing: 0.8px; /* Spacing for uppercase */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.insurance-button:hover:not(:disabled) {
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.insurance-button:disabled {
+    background-color: #cce0e6; /* Muted disabled color */
+    color: #84a5b5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Specific Button Colors */
+.insurance-button[type="submit"] { /* Get Quote Button */
+     background: linear-gradient(to right, #00b4d8, #0077b6); /* Gradient blue */
+}
+.insurance-button[type="submit"]:hover:not(:disabled) {
+     background: linear-gradient(to right, #009ac7, #005a8d);
+}
+
+.insurance-button.back {
+    background: #adb5bd; /* Neutral grey */
+    margin-top: 25px; /* More space above back button */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.insurance-button.back:hover:not(:disabled) {
+    background: #9fa8b1;
+    transform: translateY(-1px); /* Less lift for back button */
+}
+
+/* --- Quote Result & Actions --- */
+.insurance-quote-result {
+    margin-top: 30px;
+    padding: 20px 25px;
+    border: 1px solid #90e0ef; /* Cyan border */
+    border-radius: 10px;
+    background-color: rgba(224, 247, 250, 0.7); /* Very light cyan, semi-transparent */
+    text-align: left;
+}
+
+.insurance-quote-result h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #0077b6; /* Medium blue */
+    text-align: center;
+}
+
+.insurance-quote-result p {
+    margin-bottom: 8px;
+    color: #023e54; /* Darker text for readability */
+    font-size: 1.0em;
+}
+
+.insurance-quote-result strong {
+    color: #005a8d; /* Strong blue for premium */
+    font-size: 1.3em; /* Make premium stand out */
+    font-weight: 700;
+}
+
+.insurance-actions {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column; /* Stack buttons on smaller screens */
+    gap: 15px;
+    align-items: center; /* Center buttons when stacked */
+}
+
+/* Make action buttons not full width by default, but allow stacking */
+.insurance-actions .insurance-button {
+     width: auto; /* Auto width */
+     min-width: 220px; /* Minimum width */
+     padding: 10px 25px;
+     margin-top: 0;
+}
+
+.insurance-actions .insurance-button.accept {
+    background: linear-gradient(to right, #80ed99, #57cc99); /* Green gradient */
+}
+.insurance-actions .insurance-button.accept:hover:not(:disabled) {
+    background: linear-gradient(to right, #6fdb8a, #4caf89);
+}
+
+.insurance-actions .insurance-button.decline {
+    background: linear-gradient(to right, #ff8fab, #f76f90); /* Pink/Coral gradient */
+}
+.insurance-actions .insurance-button.decline:hover:not(:disabled) {
+     background: linear-gradient(to right, #ff7a9f, #f55a7f);
+}
+
+/* --- Message Styles --- */
+.insurance-message {
+    margin: 20px 0; /* Consistent vertical margin */
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 1.0em;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.insurance-message.success {
+    background-color: #e6ffed; /* Light mint green */
+    color: #1f754f; /* Dark green */
+    border-color: #c1f0cf;
+}
+
+.insurance-message.error {
+    background-color: #fff0f3; /* Light pink */
+    color: #a02c47; /* Dark pink/red */
+    border-color: #ffd9e0;
+}
+
+.insurance-message.info {
+    background-color: #e0f7fa; /* Light cyan */
+    color: #014f86; /* Dark blue */
+    border-color: #b3eaf2;
+}
+
+/* Responsive adjustments */
+@media (min-width: 576px) {
+    .insurance-actions {
+        flex-direction: row; /* Side-by-side buttons on larger screens */
+        justify-content: center; /* Center buttons horizontally */
+    }
+     .insurance-actions .insurance-button {
+        width: auto; /* Allow natural width */
+     }
+}
+
+@media (max-width: 480px) {
+     .insurance-content-box {
+        padding: 25px 20px; /* Less padding on small screens */
+     }
+     .insurance-button {
+        padding: 12px 20px; /* Adjust button padding */
+     }
+     .insurance-quote-result {
+         padding: 15px;
+     }
+}

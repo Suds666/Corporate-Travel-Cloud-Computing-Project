@@ -1,0 +1,8 @@
+# services/auth_service/requirements.txt
+Flask
+Flask-MySQLdb
+Flask-Cors
+waitress
+python-dotenv
+requests # Will be needed later if Auth calls other services
+# PyJWT # Add this later for Step 11 (Authentication)

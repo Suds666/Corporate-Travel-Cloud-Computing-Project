@@ -1,0 +1,162 @@
+/* src/components/Flights.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&display=swap'); /* Optional festive font */
+
+body {
+  margin: 0;
+  overflow: hidden; /* Prevent page scroll */
+}
+
+/* --- Page Wrapper --- */
+.flights-page-wrapper.winter-theme {
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  display: flex;
+  flex-direction: column; /* Stack UI on top */
+  justify-content: flex-start; /* Align UI to top */
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+
+  /* --- Winter background IMAGE --- */
+  background-image: url('../../public/images/kitzbuhel-gs52dmVmVv8-unsplash.jpg'); /* <<<< UPDATED PATH */
+  background-size: cover;           /* Cover the area */
+  background-position: center center; /* Center the image */
+  background-repeat: no-repeat;
+  overflow: hidden; /* Crucial to hide elements starting above */
+}
+
+/* --- Animated Elements Container --- */
+.winter-elements-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Allows clicks on UI below */
+  z-index: 1;
+  overflow: hidden;
+}
+
+.winter-element {
+  position: absolute;
+  display: block;
+  user-select: none;
+  will-change: transform, opacity, left, top; /* Performance hint */
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2));
+  transition: transform 0.1s linear; /* Slight smoothing for held item */
+}
+
+.winter-element.snowflake {
+  /* Add subtle animation? */
+}
+
+.winter-element.snowball {
+  cursor: grab; /* Indicate draggable */
+  pointer-events: all; /* Allow mouse events ON snowballs */
+}
+
+.winter-element.held {
+  cursor: grabbing;
+  filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.4));
+  transform: scale(1.1); /* Slightly larger when held */
+}
+
+
+/* --- Target Styling --- */
+.winter-target {
+    position: absolute;
+    z-index: 20; /* Above falling items, below UI maybe */
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+    transition: transform 0.2s ease-out, width 0.5s ease-out, height 0.5s ease-out;
+}
+.winter-target.hit {
+    transform: scale(0.8) rotate(15deg); /* Example hit effect */
+}
+
+/* --- UI Overlay --- */
+.flights-ui-overlay {
+  position: relative;
+  z-index: 30; /* On top of everything */
+  width: 90%;
+  max-width: 800px;
+  margin-top: 40px;
+  padding: 25px 30px;
+  /* Adjust background for better readability over the photo */
+  background-color: rgba(248, 252, 255, 0.85); /* Slightly less transparent white */
+  backdrop-filter: blur(8px); /* Increase blur slightly */
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.flights-ui-overlay h3 {
+  color: #0a2c4e; /* Dark blue */
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.6em;
+  font-family: 'Mountains of Christmas', cursive; /* Optional festive font */
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.5); /* Light shadow for pop */
+}
+.flights-ui-overlay h3 strong {
+  color: #1c6aae; /* Brighter blue */
+}
+
+.flights-ui-overlay h4 {
+  color: #3a506b; /* Mid blue/grey */
+  margin-top: 30px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.flights-buttons-container {
+  margin-top: 20px;
+}
+
+.airline-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.flights-button {
+  padding: 10px 22px;
+  border-radius: 20px; /* Pill shape */
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  transition: all 0.25s ease-out;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.flights-button.dashboard {
+  background-color: #4a90e2; /* Brighter blue */
+  color: white;
+  margin-bottom: 30px; /* Space below dashboard button */
+}
+.flights-button.dashboard:hover {
+  background-color: #357abd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.flights-button.airline {
+  background-color: #e0f2f7; /* Very light blue */
+  color: #0277bd; /* Darker cyan */
+  border: 1px solid #b3e5fc;
+}
+.flights-button.airline:hover {
+  background-color: #b3e5fc; /* Light blue */
+  color: #01579b;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.flights-ui-overlay p { /* Loading/No airlines message */
+    color: #555;
+    margin-top: 20px;
+}

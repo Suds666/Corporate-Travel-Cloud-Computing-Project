@@ -1,0 +1,142 @@
+# corporate-travel/docker-compose.yml (Microservices Version)
+version: '3.8'
+
+services:
+
+  # --- Frontend Service (No changes needed here) ---
+  frontend:
+    build: ./frontend
+    container_name: corporate-travel-frontend
+    ports:
+      - "3000:80" # Access frontend via http://localhost:3000
+    restart: unless-stopped
+    depends_on:
+      - api-gateway # Depends on the gateway now, not the old backend
+    networks:
+      - travel-net
+
+  # --- API Gateway Service ---
+  api-gateway:
+    build: ./api_gateway
+    container_name: corporate-travel-gateway
+    ports:
+      # Expose the gateway on port 8080 externally
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on: # Wait for backend services to start (doesn't guarantee they are *ready*)
+      - auth-service
+      - flight-service
+      - booking-service
+      - visa-service
+      - analytics-service
+    networks:
+      - travel-net
+
+  # --- Backend Microservices ---
+
+  auth-service:
+    build: ./services/auth_service
+    container_name: corporate-travel-auth
+    # No external ports needed, communication via gateway/internal network
+    restart: unless-stopped
+    environment:
+      # Consistent DB config for all services connecting to the same DB
+      MYSQL_HOST: mysql_db # Service name of the MySQL container
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD} # Read from .env
+      MYSQL_DB: ${MYSQL_DATABASE}         # Read from .env
+      FLASK_ENV: production
+      # Add other env vars if needed by this service
+    depends_on:
+      - mysql_db
+    networks:
+      - travel-net
+
+  flight-service:
+    build: ./services/flight_service
+    container_name: corporate-travel-flight
+    restart: unless-stopped
+    environment:
+      MYSQL_HOST: mysql_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DB: ${MYSQL_DATABASE}
+      FLASK_ENV: production
+      # No other specific env vars needed for this service currently
+    depends_on:
+      - mysql_db
+    networks:
+      - travel-net
+
+  booking-service:
+    build: ./services/booking_service
+    container_name: corporate-travel-booking
+    restart: unless-stopped
+    environment:
+      MYSQL_HOST: mysql_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DB: ${MYSQL_DATABASE}
+      FLASK_ENV: production
+      # --- IMPORTANT: URL for internal communication ---
+      FLIGHT_SERVICE_URL: http://flight-service:5002 # Internal address: service name + internal port
+    depends_on:
+      - mysql_db
+      - flight-service # Booking needs flight details
+    networks:
+      - travel-net
+
+  visa-service:
+    build: ./services/visa_service
+    container_name: corporate-travel-visa
+    restart: unless-stopped
+    volumes:
+      # Map the host upload folder to the path inside the container
+      - ./backend/visa_uploads:/app/visa_uploads # Keep using the original host folder path
+    environment:
+      # No DB vars needed if app.py doesn't connect
+      FLASK_ENV: production
+    depends_on:
+      - mysql_db # Optional: only if it needs DB access later
+    networks:
+      - travel-net
+
+  analytics-service:
+    build: ./services/analytics_service
+    container_name: corporate-travel-analytics
+    restart: unless-stopped
+    environment:
+      MYSQL_HOST: mysql_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DB: ${MYSQL_DATABASE}
+      FLASK_ENV: production
+    depends_on:
+      - mysql_db
+    networks:
+      - travel-net
+
+  # --- Database Service (No changes needed here) ---
+  mysql_db:
+    image: mysql:8.0
+    container_name: corporate-travel-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # From .env
+      MYSQL_DATABASE: ${MYSQL_DATABASE}         # From .env
+    volumes:
+      - mysql_data:/var/lib/mysql # Persistent data volume
+    ports:
+      - "3306:3306" 
+      # Optional: For external DB access (e.g., Workbench)
+    restart: unless-stopped
+    networks:
+      - travel-net
+
+# Define the custom network
+networks:
+  travel-net:
+    driver: bridge
+
+# Define the named volume for MySQL data
+volumes:
+  mysql_data:

@@ -1,0 +1,9 @@
+# services/visa_service/requirements.txt
+Flask
+# Flask-MySQLdb # Remove if not used
+Flask-Cors
+waitress
+python-dotenv
+requests
+pytesseract   # <<< Add
+Pillow        # <<< Add

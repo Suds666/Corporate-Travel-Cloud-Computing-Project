@@ -1,0 +1,157 @@
+/* ---- Base Dashboard Styling ---- */
+.dashboard-container {
+  padding: 2rem; /* Increased padding */
+  background-color: #f4f7f6; /* Light grey-green background */
+  /* min-height: 100vh; */ /* REMOVE or comment out min-height here if you want the container to only be as tall as its content */
+   /* OR ensure the PARENT of dashboard-container allows scrolling */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Clean sans-serif font */
+  width: 100%; /* Ensure it takes full width */
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.dashboard-header {
+font-size: 2rem; /* Larger header */
+font-weight: 600;
+color: #333; /* Darker text */
+margin-bottom: 2rem; /* Space below header */
+padding-bottom: 0.5rem;
+border-bottom: 1px solid #ddd; /* Subtle separator */
+}
+
+/* ---- Grid Layout ---- */
+.dashboard-grid {
+display: grid;
+grid-template-columns: 1fr; /* Default: single column */
+gap: 1.5rem; /* Spacing between cards */
+}
+
+/* On medium screens and up, use a 2-column layout */
+@media (min-width: 768px) {
+.dashboard-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+}
+
+/* On large screens, allow the designated card to span both columns */
+@media (min-width: 1024px) {
+.dashboard-grid {
+   /* Define the grid for 2 columns explicitly */
+   grid-template-columns: repeat(2, 1fr);
+}
+ /* Make the third card span both columns on large screens */
+ .dashboard-card.full-width-card {
+    grid-column: 1 / -1; /* Span from first line to last line */
+ }
+}
+
+
+/* ---- Card Styling ---- */
+.dashboard-card {
+background-color: #ffffff;
+border-radius: 8px; /* Rounded corners */
+padding: 1.5rem;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer shadow */
+display: flex;
+flex-direction: column; /* Stack title and chart vertically */
+transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+/* Ensure cards don't shrink below their content height */
+min-height: 0; /* Override potential browser defaults */
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px); /* Slight lift on hover */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+font-size: 1.2rem; /* Slightly larger card title */
+font-weight: 500;
+color: #444; /* Medium-dark grey */
+margin-bottom: 1rem; /* Space between title and chart */
+flex-shrink: 0; /* Prevent title from shrinking */
+}
+
+/* ---- Chart Container Styling ---- */
+.chart-container {
+position: relative; /* Needed for Chart.js responsiveness */
+flex-grow: 1; /* Allow container to fill remaining card space */
+/* min-height: 320px; */ /* <<-- REMOVE or significantly reduce this fixed min-height */
+height: 300px;        /* <<-- INSTEAD, try setting a specific height */
+                     /* OR let flex-grow handle it, maybe add a smaller min-height like 250px if needed */
+                     /* height: auto; <<-- Could also work if aspect ratio maintained*/
+width: 100%;
+display: flex; /* Center the 'no data' message */
+justify-content: center;
+align-items: center;
+}
+
+/* Specific styling for pie chart if needed */
+.pie-chart-container {
+ /* Pie charts often look better closer to square */
+ /* You might want to limit its height or width */
+ /* max-height: 400px; */ /* Example */
+ /* max-width: 450px; */ /* Example */
+ /* margin-left: auto; */ /* Center if max-width is set */
+ /* margin-right: auto; */
+}
+
+/* Ensure canvas respects the container size */
+.chart-container canvas {
+  max-width: 100%;
+  max-height: 100%; /* Canvas should not exceed its container's height */
+}
+
+
+/* ---- Message Styling (Loading, Error, No Data) ---- */
+.dashboard-message {
+  padding: 2rem;
+  text-align: center;
+  border-radius: 8px;
+  margin: 2rem auto; /* Center the message box */
+  max-width: 600px; /* Limit width */
+}
+
+.loading-message {
+  background-color: #e0f2fe; /* Light blue */
+  color: #075985; /* Dark blue */
+  border: 1px solid #bae6fd;
+}
+
+.error-message {
+  background-color: #fee2e2; /* Light red */
+  color: #991b1b; /* Dark red */
+  border: 1px solid #fecaca;
+}
+
+.error-message h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  color: #b91c1c; /* Slightly darker red for heading */
+}
+
+.no-data-message {
+  font-size: 1rem;
+  color: #6b7280; /* Muted grey text */
+  text-align: center;
+  /* Removed margin-top: 2rem; let flexbox center it */
+}
+
+/* ---- Button Styling (Example) ---- */
+.button-primary {
+display: inline-block;
+margin-top: 1rem;
+padding: 0.6rem 1.2rem;
+background-color: #3b82f6; /* Blue */
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 0.9rem;
+font-weight: 500;
+cursor: pointer;
+text-decoration: none;
+transition: background-color 0.2s ease;
+}
+
+.button-primary:hover {
+background-color: #2563eb; /* Darker blue */
+}

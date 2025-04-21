@@ -1,0 +1,20 @@
+# frontend/.dockerignore
+
+# Node modules folder (very large, should be installed inside container)
+node_modules
+
+# Local build output (will be generated inside container)
+build
+
+# Git folder
+.git
+.gitignore
+
+# Log files
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+
+# IDE folders
+.idea/
+.vscode/

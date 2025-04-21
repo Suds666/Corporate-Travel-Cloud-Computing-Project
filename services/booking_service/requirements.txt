@@ -1,0 +1,7 @@
+# services/booking_service/requirements.txt
+Flask
+Flask-MySQLdb
+Flask-Cors
+waitress
+python-dotenv
+requests # <<< ESSENTIAL for calling Flight Service

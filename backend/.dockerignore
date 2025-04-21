@@ -1,0 +1,23 @@
+# backend/.dockerignore
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment folders (if you use them locally)
+env/
+venv/
+.venv/
+
+# Git folder
+.git
+.gitignore
+
+# IDE folders
+.idea/
+.vscode/
+
+# Local upload folder (docker-compose will handle mapping this via a volume)
+visa_uploads/

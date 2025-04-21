@@ -1,0 +1,7 @@
+# services/analytics_service/requirements.txt
+Flask
+Flask-MySQLdb
+Flask-Cors
+waitress
+python-dotenv
+requests
