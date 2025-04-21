@@ -14,13 +14,48 @@ const SMS_SERVICE_ENDPOINT = 'http://bore.pub:34664/send-suds-sms'; // Your SMS 
 const DOCUMENT_SERVICE_PUBLIC_BASE_URL = 'http://bore.pub:36781';
 // --------------------------
 
-// --- HELPER FUNCTION: Format Date ---
-const formatDateForDisplay = (dateString) => { /* ... same ... */ };
-// ---------------------
+// *** HELPER FUNCTION: Format Date ***
+const formatDateForDisplay = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+        const date = new Date(dateString + 'T00:00:00');
+        if (isNaN(date)) throw new Error("Invalid Date object");
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric', month: 'short', day: 'numeric',
+        });
+    } catch (e) { console.error("Error formatting display date:", dateString, e); return dateString; }
+};
+// **********************************
 
-// --- HELPER FUNCTION: Fix URL ---
-const fixDocumentUrl = (internalUrl) => { /* ... same ... */ };
-// ******************************************
+// *** HELPER FUNCTION: Fix URL ***
+const fixDocumentUrl = (internalUrl) => {
+    if (!internalUrl || typeof internalUrl !== 'string') {
+        return null;
+    }
+    try {
+        // Target hostname and port to replace (adjust if backend changes)
+        const internalHostPort = "host.docker.internal:8004";
+
+        // Check if the internal host/port is actually in the URL before replacing
+        if (!internalUrl.includes(internalHostPort)) {
+             console.log(`URL "${internalUrl}" does not contain internal host "${internalHostPort}", returning as is.`);
+             return internalUrl; // Assume it's already correct or different format
+        }
+
+        const urlObject = new URL(internalUrl);
+        const pathAndFilename = urlObject.pathname; // Gets "/documents/policy_123.pdf"
+
+        // Combine the public base URL with the extracted path
+        const publicUrl = DOCUMENT_SERVICE_PUBLIC_BASE_URL + pathAndFilename;
+        console.log(`Fixed URL: ${internalUrl} -> ${publicUrl}`);
+        return publicUrl;
+
+    } catch (e) {
+        console.error("Error fixing document URL:", internalUrl, e);
+        return internalUrl; // Return original on error
+    }
+};
+// *********************************
 
 function AcceptInsurance() {
     const location = useLocation();
