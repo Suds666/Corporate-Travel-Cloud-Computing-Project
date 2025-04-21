@@ -5,7 +5,7 @@ import axios from 'axios';
 import './Insurance.css'; // Import the CSS file
 
 // --- Service Endpoint ---
-const QUOTE_SERVICE_ENDPOINT = 'http://bore.pub:9330/quotes'; // Or 21166
+const QUOTE_SERVICE_ENDPOINT = 'http://bore.pub:16876/quotes'; // Or 21166
 // --- REMOVED Policy Service Endpoint ---
 // --------------------------
 

@@ -5,13 +5,13 @@ import axios from 'axios';
 import './AcceptInsurance.css'; // Make sure this CSS file exists
 
 // --- Service Endpoints ---
-const POLICY_SERVICE_ENDPOINT = 'http://bore.pub:3743/api/policies/external';
-const DOCUMENT_SERVICE_ENDPOINT = 'http://bore.pub:36781/api/documents/';
+const POLICY_SERVICE_ENDPOINT = 'http://bore.pub:43496/api/policies/external';
+const DOCUMENT_SERVICE_ENDPOINT = 'http://bore.pub:47659/api/documents/';
 const EMAIL_SERVICE_ENDPOINT = 'http://bore.pub:12026/send-suds-email';
 // *** ADD SMS Service Endpoint ***
 const SMS_SERVICE_ENDPOINT = 'http://bore.pub:34664/send-suds-sms'; // Your SMS endpoint
 // Public base URL for fixing document link
-const DOCUMENT_SERVICE_PUBLIC_BASE_URL = 'http://bore.pub:36781';
+const DOCUMENT_SERVICE_PUBLIC_BASE_URL = 'http://bore.pub:47659';
 // --------------------------
 
 // *** HELPER FUNCTION: Format Date ***
